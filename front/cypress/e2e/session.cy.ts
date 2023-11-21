@@ -1,4 +1,5 @@
-describe('Session spec', () => {
+/*
+describe('Session creation spec', () => {
   beforeEach(() => {
     cy.login('yoga@studio.com', 'test!1234');
 
@@ -76,4 +77,49 @@ describe('Session spec', () => {
     cy.get('button[type=submit]').should('be.disabled');
   });
 });
+*/
+
+
+describe('Session update spec', () => {
+  beforeEach(() => {
+    cy.login('yoga@studio.com', 'test!1234');
+
+    cy.intercept('GET', '/api/session', [
+        {
+          "id": 2,
+          "name": "session 1",
+          "date": "2012-01-01T00:00:00.000+00:00",
+          "teacher_id": 1,
+          "description": "my description",
+          "users": [
+            2
+          ],
+          "createdAt": "2023-10-18T15:20:27",
+          "updatedAt": "2023-10-18T15:20:53"
+        },
+        {
+          "id": 3,
+          "name": "ddddd",
+          "date": "2023-11-20T00:00:00.000+00:00",
+          "teacher_id": 1,
+          "description": "ddddddd",
+          "users": [],
+          "createdAt": "2023-11-16T13:23:37",
+          "updatedAt": "2023-11-16T13:23:37"
+        }
+      ]
+    ).as('session');
+    /*
+        cy.get('.mat-card-header > .mat-focus-indicator').click();
+    */
+
+  });
+
+
+  it('Update session successfully', () => {
+
+  });
+});
+
+
 
