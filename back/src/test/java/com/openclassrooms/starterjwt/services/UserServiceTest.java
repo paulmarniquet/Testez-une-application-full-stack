@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class UserServiceTests {
+public class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
@@ -22,7 +22,6 @@ public class UserServiceTests {
         User user = new User();
         user.setId(id);
         when(userRepository.findById(id)).thenReturn(java.util.Optional.of(user));
-
 
         // Act
         UserService userService = new UserService(userRepository);

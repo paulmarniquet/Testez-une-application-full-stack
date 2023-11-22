@@ -131,6 +131,7 @@
 								<exclude>**/payload/**</exclude>
 								<exclude>**/models/**</exclude>
 								<exclude>**/exception/**</exclude>
+								<exclude>**/repository/**</exclude>
 							</excludes>
 							<rules>
 								<rule>
