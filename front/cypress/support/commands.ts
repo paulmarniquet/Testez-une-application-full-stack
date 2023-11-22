@@ -56,12 +56,20 @@ Cypress.Commands.add("login", (email: any, password: any) => {
         },
     });
 
-    cy.intercept(
-        {
-            method: 'GET',
-            url: '/api/session',
-        },
-        []).as('session');
+  cy.intercept('GET', '/api/session', {
+    body: [
+      {
+        "id": 1,
+        "name": "Séance de repos",
+        "date": "2023-12-12T10:00:00.000+00:00",
+        "teacher_id": 1,
+        "description": "On se repose ici",
+        "users": [2],
+        "createdAt": "2023-11-18T11:12:11",
+        "updatedAt": "2023-11-18T11:12:11"
+      },
+    ]
+  }).as('session');
 
     cy.get('input[formControlName=email]').type(email);
     cy.get('input[formControlName=password]').type(`${password}{enter}{enter}`);

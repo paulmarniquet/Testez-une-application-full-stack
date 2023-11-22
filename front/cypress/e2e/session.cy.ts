@@ -1,4 +1,3 @@
-/*
 describe('Session creation spec', () => {
   beforeEach(() => {
     cy.login('yoga@studio.com', 'test!1234');
@@ -77,49 +76,122 @@ describe('Session creation spec', () => {
     cy.get('button[type=submit]').should('be.disabled');
   });
 });
-*/
 
 
 describe('Session update spec', () => {
   beforeEach(() => {
-    cy.login('yoga@studio.com', 'test!1234');
 
-    cy.intercept('GET', '/api/session', [
-        {
-          "id": 2,
-          "name": "session 1",
-          "date": "2012-01-01T00:00:00.000+00:00",
-          "teacher_id": 1,
-          "description": "my description",
-          "users": [
-            2
-          ],
-          "createdAt": "2023-10-18T15:20:27",
-          "updatedAt": "2023-10-18T15:20:53"
-        },
-        {
-          "id": 3,
-          "name": "ddddd",
-          "date": "2023-11-20T00:00:00.000+00:00",
-          "teacher_id": 1,
-          "description": "ddddddd",
-          "users": [],
-          "createdAt": "2023-11-16T13:23:37",
-          "updatedAt": "2023-11-16T13:23:37"
-        }
-      ]
-    ).as('session');
-    /*
-        cy.get('.mat-card-header > .mat-focus-indicator').click();
-    */
+    cy.intercept('GET', '/api/session/1', {
+      body: {
+        "id": 1,
+        "name": "Séance de repos",
+        "date": "2023-12-12T10:00:00.000+00:00",
+        "teacher_id": 1,
+        "description": "On se repose ici",
+        "users": [2],
+        "createdAt": "2023-11-18T11:12:11",
+        "updatedAt": "2023-11-18T11:12:11"
+      }
+    }).as('session1');
 
+    cy.intercept('GET', '/api/teacher/1', {
+      body: {
+        id: 1,
+        lastName: "DELAHAYE",
+        firstName: "Margot",
+        createdAt: "2023-08-28T11:18:31",
+        updatedAt: "2023-08-28T11:18:31"
+      }
+    }).as('teacher');
   });
 
 
-  it('Update session successfully', () => {
+  it('Detail a session', () => {
+    cy.visit('/sessions');
+    cy.login('yoga@studio.com', 'test!1234');
+    cy.get('@session');
+    cy.contains('Detail').click();
+    cy.wait('@teacher');
+    cy.get('button[color="warn"]').should('contain', 'Delete');
+    cy.get('div[class="description"]').should('contain', 'On se repose ici');
+  });
 
+
+  it('Update a session', () => {
+
+    cy.intercept('PUT', '/api/session/1', {
+      body: {
+        "id": 1,
+        "name": "Séance de repos 2",
+        "date": "2023-12-12T10:00:00.000+00:00",
+        "teacher_id": 1,
+        "description": "On se repose ici",
+        "users": [2],
+        "createdAt": "2023-11-18T11:12:11",
+        "updatedAt": "2023-11-18T11:12:11"
+      }
+    }).as('sessionUpdated');
+
+    cy.visit('/sessions');
+    cy.login('yoga@studio.com', 'test!1234');
+    cy.get('@session');
+    cy.contains('Edit').click();
+    cy.get('input[formControlName=name]').clear().type('Séance de repos 2');
+    cy.get('button[type=submit]').click();
+    cy.wait('@sessionUpdated');
+    cy.get('.mat-simple-snackbar').should('contain', 'Session updated !');
+  });
+
+  it('Invalid field during update', () => {
+    cy.visit('/sessions');
+    cy.login('yoga@studio.com', 'test!1234');
+    cy.get('@session');
+    cy.contains('Edit').click();
+    cy.get('input[formControlName=name]').clear();
+    cy.get('button[type=submit]').should('be.disabled');
+  });
+
+
+  it('Delete a session', () => {
+
+      cy.intercept('DELETE', '/api/session/1', {
+        statusCode: 200
+      }).as('sessionDeleted');
+
+      cy.visit('/sessions');
+    cy.login('yoga@studio.com', 'test!1234');
+    cy.get('@session');
+    cy.contains('Detail').click();
+    cy.get('button[color="warn"]').click();
+    cy.wait('@sessionDeleted');
+    cy.get('.mat-simple-snackbar').should('contain', 'Session deleted !');
   });
 });
 
+describe('Account informations', () => {
+  beforeEach(() => {
+    cy.login('yoga@studio.com', 'test!1234');
 
+    cy.intercept('GET', '/api/user/1', {
+      body: {
+      "id": 1,
+      "email": "yoga@studio.com",
+      "lastName": "Admin",
+      "firstName": "Admin",
+      "admin": true,
+      "createdAt": "2023-10-18T15:05:56",
+      "updatedAt": "2023-10-18T15:05:56"
 
+      }
+    }).as('user');
+  });
+
+    it('Display account informations', () => {
+      cy.get('[routerlink="me"]').click();
+      cy.url().should('include', '/me');
+      cy.get('@user');
+      cy.get('.mat-card-content > div.ng-star-inserted > :nth-child(1)').should('contain', 'Name: Admin ADMIN');
+      cy.get('.mat-card-content > div.ng-star-inserted > :nth-child(2)').should('contain', 'Email: yoga@studio.com');
+      cy.get('.mat-card-content > div.ng-star-inserted > :nth-child(3)').should('contain', 'You are admin');
+    });
+});

@@ -87,3 +87,17 @@ describe('Login spec', () => {
     cy.get('.error').should('contain', 'An error occurred');
   })
 });
+
+
+
+describe('Logout spec', () => {
+  beforeEach(() => {
+    cy.login('yoga@studio.com', 'test!1234');
+  });
+
+  it('Should logout', () => {
+    cy.get('.mat-toolbar > .ng-star-inserted > :nth-child(3)').click();
+    cy.url().should('contain', '')
+    cy.get('[routerlink="login"]').should('exist');
+  });
+});
