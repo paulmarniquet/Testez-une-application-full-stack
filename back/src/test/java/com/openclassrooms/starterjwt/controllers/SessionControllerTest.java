@@ -73,5 +73,59 @@ public class SessionControllerTest {
     @Test
     public void create() {
         // Arrange
+        SessionDto sessionDto = new SessionDto();
+        sessionDto.setName("SessionUno");
+        Session session = new Session();
+        session.setName("SessionUno");
+        when(sessionService.create(session)).thenReturn(session);
+        when(sessionMapper.toEntity(sessionDto)).thenReturn(session);
+        when(sessionMapper.toDto(session)).thenReturn(sessionDto);
+
+        // Act
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        ResponseEntity<?> response = sessionController.create(sessionDto);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(response.getBody(), sessionDto);
+    }
+
+    @Test
+    public void update() {
+        // Arrange
+        Long id = 1L;
+        SessionDto sessionDto = new SessionDto();
+        sessionDto.setName("SessionUno");
+        Session session = new Session();
+        session.setName("SessionUno");
+        when(sessionService.update(id, session)).thenReturn(session);
+        when(sessionMapper.toEntity(sessionDto)).thenReturn(session);
+        when(sessionMapper.toDto(session)).thenReturn(sessionDto);
+
+        // Act
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        ResponseEntity<?> response = sessionController.update(id.toString(), sessionDto);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(response.getBody(), sessionDto);
+    }
+
+    @Test
+    public void delete() {
+        // Arrange
+/*        Long id = 1L;
+        Session session = new Session();
+
+        when(sessionService.getById(id)).thenReturn(session);
+
+        // Act
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        Session sessionFound = sessionService.getById(id);
+        sessionService.delete(id);
+
+        // Assert
+        verify(sessionService).getById(id);
+        verify(sessionService).delete(id);*/
     }
 }
