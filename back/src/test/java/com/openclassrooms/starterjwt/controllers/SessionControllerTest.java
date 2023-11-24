@@ -3,7 +3,9 @@ package com.openclassrooms.starterjwt.controllers;
 import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
+import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.SessionService;
+import com.openclassrooms.starterjwt.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,9 @@ public class SessionControllerTest {
     SessionMapper sessionMapper;
     @Mock
     SessionService sessionService;
+
+    @Mock
+    UserService userService;
 
     @Test
     public void getById() {
@@ -114,18 +119,42 @@ public class SessionControllerTest {
     @Test
     public void delete() {
         // Arrange
-/*        Long id = 1L;
-        Session session = new Session();
-
+        Long id = 1L;
+        Session session = Session.builder().id(id).build();
         when(sessionService.getById(id)).thenReturn(session);
 
         // Act
         SessionController sessionController = new SessionController(sessionService, sessionMapper);
-        Session sessionFound = sessionService.getById(id);
-        sessionService.delete(id);
+        ResponseEntity<?> response = sessionController.save(id.toString());
 
         // Assert
         verify(sessionService).getById(id);
-        verify(sessionService).delete(id);*/
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void participate() {
+        // Arrange
+        Long userId = 1L;
+        Long sessionId = 1L;
+
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        ResponseEntity<?> response = sessionController.participate(sessionId.toString(), userId.toString());
+
+        verify(sessionService).participate(sessionId, userId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void noLongerParticipate() {
+        // Arrange
+        Long userId = 1L;
+        Long sessionId = 1L;
+
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        ResponseEntity<?> response = sessionController.noLongerParticipate(sessionId.toString(), userId.toString());
+
+        verify(sessionService).noLongerParticipate(sessionId, userId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

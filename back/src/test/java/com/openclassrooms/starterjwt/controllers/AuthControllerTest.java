@@ -89,12 +89,6 @@ public class AuthControllerTest {
         String lastname = "Marniquet";
         boolean isAdmin = false;
 
-        SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setEmail(email);
-        signupRequest.setPassword(password);
-        signupRequest.setFirstName(firstname);
-        signupRequest.setLastName(lastname);
-
         when(userRepository.existsByEmail(email)).thenReturn(false);
         when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
         when(userRepository.save(User.builder().email(email).password("encodedPassword").firstName(firstname)
@@ -104,6 +98,11 @@ public class AuthControllerTest {
         // Act
         AuthController authController = new AuthController(authenticationManager, passwordEncoder, jwtUtils,
                 userRepository);
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setEmail(email);
+        signupRequest.setPassword(password);
+        signupRequest.setFirstName(firstname);
+        signupRequest.setLastName(lastname);
         ResponseEntity<?> response = authController.registerUser(signupRequest);
 
         // Assert
