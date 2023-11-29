@@ -49,6 +49,20 @@ public class UserControllerTest {
     }
 
     @Test
+    public void getByIdNotFound() {
+        // Arrange
+        Long id = 1L;
+        when(userService.findById(id)).thenReturn(null);
+
+        // Act
+        UserController userController = new UserController(userService, userMapper);
+        ResponseEntity<?> response = userController.findById(id.toString());
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
     public void save() {
         Long id = 1L;
         String email = "lol@gmail.com";
@@ -75,5 +89,18 @@ public class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(userService).findById(id);
         verify(userService).delete(id);
+    }
+
+    @Test
+    public void saveNotFound() {
+        Long id = 1L;
+        when(userService.findById(id)).thenReturn(null);
+
+        UserController userController = new UserController(userService, userMapper);
+        ResponseEntity<?> response = userController.save(id.toString());
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(userService).findById(id);
+        verify(userService, never()).delete(id);
     }
 }

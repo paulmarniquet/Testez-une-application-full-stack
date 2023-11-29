@@ -51,6 +51,20 @@ public class SessionControllerTest {
     }
 
     @Test
+    public void getByIdNotFound() {
+        // Arrange
+        Long id = 1L;
+        when(sessionService.getById(id)).thenReturn(null);
+
+        // Act
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        ResponseEntity<?> response = sessionController.findById(id.toString());
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
     public void getAll() {
         // Arrange
         List<Session> session = new ArrayList<>();
@@ -130,6 +144,21 @@ public class SessionControllerTest {
         // Assert
         verify(sessionService).getById(id);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void deleteNotFound() {
+        // Arrange
+        Long id = 1L;
+        when(sessionService.getById(id)).thenReturn(null);
+
+        // Act
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        ResponseEntity<?> response = sessionController.save(id.toString());
+
+        // Assert
+        verify(sessionService).getById(id);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test

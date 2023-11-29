@@ -3,7 +3,6 @@ package com.openclassrooms.starterjwt.security.services;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 import java.util.HashSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserDetailsImplTest {

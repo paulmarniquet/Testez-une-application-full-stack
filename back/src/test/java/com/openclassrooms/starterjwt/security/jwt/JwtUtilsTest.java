@@ -1,59 +1,171 @@
-/*
 package com.openclassrooms.starterjwt.security.jwt;
 
-import com.openclassrooms.starterjwt.security.services.UserDetailsImplTest;
-import io.jsonwebtoken.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.userdetails.UserDetails;
+import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Date;
-
-@Component
+@SpringBootTest
 public class JwtUtilsTest {
-  private static final Logger logger = LoggerFactory.getLogger(JwtUtilsTest.class);
 
-  @Value("${oc.app.jwtSecret}")
-  private String jwtSecret;
 
-  @Value("${oc.app.jwtExpirationMs}")
-  private int jwtExpirationMs;
+    @Autowired
+    JwtUtils jwtUtils;
 
-  public String generateJwtToken(Authentication authentication) {
+    @Test
+    public void generateJwtTokenTest() {
+        // Arrange
+        UserDetails userDetails = new UserDetailsImpl(
+                null,
+                "Paulo",
+                "Paul",
+                "Marniquet",
+                null,
+                "password");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
 
-    UserDetailsImplTest userPrincipal = (UserDetailsImplTest) authentication.getPrincipal();
+        // Act
+        String token = jwtUtils.generateJwtToken(authentication);
 
-    return Jwts.builder()
-        .setSubject((userPrincipal.getUsername()))
-        .setIssuedAt(new Date())
-        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-        .signWith(SignatureAlgorithm.HS512, jwtSecret)
-        .compact();
-  }
-
-  public String getUserNameFromJwtToken(String token) {
-    return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
-  }
-
-  public boolean validateJwtToken(String authToken) {
-    try {
-      Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-      return true;
-    } catch (SignatureException e) {
-      logger.error("Invalid JWT signature: {}", e.getMessage());
-    } catch (MalformedJwtException e) {
-      logger.error("Invalid JWT token: {}", e.getMessage());
-    } catch (ExpiredJwtException e) {
-      logger.error("JWT token is expired: {}", e.getMessage());
-    } catch (UnsupportedJwtException e) {
-      logger.error("JWT token is unsupported: {}", e.getMessage());
-    } catch (IllegalArgumentException e) {
-      logger.error("JWT claims string is empty: {}", e.getMessage());
+        // Assert
+        assertFalse(token.isEmpty());
+        assertEquals("Paulo", jwtUtils.getUserNameFromJwtToken(token));
+        assertTrue(jwtUtils.validateJwtToken(token));
     }
 
-    return false;
-  }
+    @Test
+    public void getUserNameFromJwtTokenTest() {
+        // Arrange
+        String username = "username";
+        UserDetails userDetails = new UserDetailsImpl(
+                null,
+                username,
+                "Paul",
+                "Marniquet",
+                null,
+                "password");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
+
+        // Act
+        String token = jwtUtils.generateJwtToken(authentication);
+        String usernameFromToken = jwtUtils.getUserNameFromJwtToken(token);
+
+        // Assert
+        assertEquals(username, usernameFromToken);
+    }
+
+    @Test
+    public void validateJwtTokenTest() {
+        // Arrange
+        UserDetails userDetails = new UserDetailsImpl(
+                null,
+                "Paulo",
+                "Paul",
+                "Marniquet",
+                null,
+                "password");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
+        String token = jwtUtils.generateJwtToken(authentication);
+
+        // Act
+        boolean isValid = jwtUtils.validateJwtToken(token);
+
+        // Assert
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void invalidToken() {
+        // Arrange
+        UserDetails userDetails = new UserDetailsImpl(
+                null,
+                "Paulo",
+                "Paul",
+                "Marniquet",
+                null,
+                "password");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
+        String token = jwtUtils.generateJwtToken(authentication);
+
+        // Act
+        String invalidToken = token + "invalid";
+        boolean isValid = jwtUtils.validateJwtToken(invalidToken);
+
+        // Assert
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void expiredToken() {
+        // Arrange
+        UserDetails userDetails = new UserDetailsImpl(
+                null,
+                "Paulo",
+                "Paul",
+                "Marniquet",
+                null,
+                "password");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
+        ReflectionTestUtils.setField(jwtUtils, "jwtExpirationMs", 0);
+        String token = jwtUtils.generateJwtToken(authentication);
+
+        // Act
+        boolean isValid = jwtUtils.validateJwtToken(token);
+
+        // Assert
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void malformedToken() {
+        // Arrange
+        UserDetails userDetails = new UserDetailsImpl(
+                null,
+                "Paulo",
+                "Paul",
+                "Marniquet",
+                null,
+                "password");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
+        String token = jwtUtils.generateJwtToken(authentication);
+
+        // Act
+        String malformedToken = token.substring(0, 10);
+        boolean isValid = jwtUtils.validateJwtToken(malformedToken);
+
+        // Assert
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void emptyToken() {
+        // Arrange
+        UserDetails userDetails = new UserDetailsImpl(
+                null,
+                "Paulo",
+                "Paul",
+                "Marniquet",
+                null,
+                "password");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
+        String token = jwtUtils.generateJwtToken(authentication);
+
+        // Act
+        String emptyToken = "";
+        boolean isValid = jwtUtils.validateJwtToken(emptyToken);
+
+        // Assert
+        assertFalse(isValid);
+    }
 }
-*/

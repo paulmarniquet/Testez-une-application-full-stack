@@ -15,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -107,5 +109,30 @@ public class AuthControllerTest {
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void registerButUserAlreadyExists() {
+
+        // Arrange
+        String email = "paul@newmember.com";
+        String password = "password";
+        String firstname = "Paul";
+        String lastname = "Marniquet";
+
+        when(userRepository.existsByEmail(email)).thenReturn(true);
+
+        // Act
+        AuthController authController = new AuthController(authenticationManager, passwordEncoder, jwtUtils,
+                userRepository);
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setEmail(email);
+        signupRequest.setPassword(password);
+        signupRequest.setFirstName(firstname);
+        signupRequest.setLastName(lastname);
+        ResponseEntity<?> response = authController.registerUser(signupRequest);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
