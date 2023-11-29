@@ -1,6 +1,9 @@
 package com.openclassrooms.starterjwt.security.jwt;
 
+import com.openclassrooms.starterjwt.dto.SessionDto;
+import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,23 +13,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+
 @SpringBootTest
 public class JwtUtilsTest {
-
 
     @Autowired
     JwtUtils jwtUtils;
 
-    @Test
-    public void generateJwtTokenTest() {
+    private UserDetails userDetails;
+
+    @BeforeEach
+    public void setUp() {
         // Arrange
-        UserDetails userDetails = new UserDetailsImpl(
+        userDetails = new UserDetailsImpl(
                 null,
                 "Paulo",
                 "Paul",
                 "Marniquet",
                 null,
                 "password");
+    }
+
+    @Test
+    public void generateJwtTokenTest() {
+        // Arrange
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
 
         // Act
@@ -63,14 +74,6 @@ public class JwtUtilsTest {
     @Test
     public void validateJwtTokenTest() {
         // Arrange
-        UserDetails userDetails = new UserDetailsImpl(
-                null,
-                "Paulo",
-                "Paul",
-                "Marniquet",
-                null,
-                "password");
-
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
         String token = jwtUtils.generateJwtToken(authentication);
 
@@ -84,14 +87,6 @@ public class JwtUtilsTest {
     @Test
     public void invalidToken() {
         // Arrange
-        UserDetails userDetails = new UserDetailsImpl(
-                null,
-                "Paulo",
-                "Paul",
-                "Marniquet",
-                null,
-                "password");
-
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
         String token = jwtUtils.generateJwtToken(authentication);
 
@@ -106,14 +101,6 @@ public class JwtUtilsTest {
     @Test
     public void expiredToken() {
         // Arrange
-        UserDetails userDetails = new UserDetailsImpl(
-                null,
-                "Paulo",
-                "Paul",
-                "Marniquet",
-                null,
-                "password");
-
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
         ReflectionTestUtils.setField(jwtUtils, "jwtExpirationMs", 0);
         String token = jwtUtils.generateJwtToken(authentication);
@@ -128,14 +115,6 @@ public class JwtUtilsTest {
     @Test
     public void malformedToken() {
         // Arrange
-        UserDetails userDetails = new UserDetailsImpl(
-                null,
-                "Paulo",
-                "Paul",
-                "Marniquet",
-                null,
-                "password");
-
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
         String token = jwtUtils.generateJwtToken(authentication);
 
@@ -150,14 +129,6 @@ public class JwtUtilsTest {
     @Test
     public void emptyToken() {
         // Arrange
-        UserDetails userDetails = new UserDetailsImpl(
-                null,
-                "Paulo",
-                "Paul",
-                "Marniquet",
-                null,
-                "password");
-
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
         String token = jwtUtils.generateJwtToken(authentication);
 

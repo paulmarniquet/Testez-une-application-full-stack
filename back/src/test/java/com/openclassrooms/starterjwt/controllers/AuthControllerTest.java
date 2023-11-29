@@ -27,20 +27,16 @@ public class AuthControllerTest {
 
     @Mock
     AuthenticationManager authenticationManager;
-
     @Mock
     JwtUtils jwtUtils;
-
     @Mock
     PasswordEncoder passwordEncoder;
-
     @Mock
     UserRepository userRepository;
 
 
     @Test
     public void authenticateUser() {
-
         // Arrange
         Long id = 1L;
         String email = "paulzer@gmail.com";
@@ -83,7 +79,6 @@ public class AuthControllerTest {
 
     @Test
     public void registerUser() {
-
         // Arrange
         String email = "paul@newmember.com";
         String password = "password";
@@ -113,7 +108,6 @@ public class AuthControllerTest {
 
     @Test
     public void registerButUserAlreadyExists() {
-
         // Arrange
         String email = "paul@newmember.com";
         String password = "password";

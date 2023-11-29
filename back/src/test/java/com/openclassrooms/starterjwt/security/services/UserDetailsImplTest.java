@@ -1,10 +1,12 @@
 package com.openclassrooms.starterjwt.security.services;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
 import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class UserDetailsImplTest {
 
     @Test

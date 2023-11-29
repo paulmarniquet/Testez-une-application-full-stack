@@ -36,13 +36,11 @@ public class TeacherServiceTest {
 
     @Test
     public void findById() {
-
         // Arrange
         Long id = 2L;
         Teacher teacher = new Teacher();
         teacher.setId(id);
         when(teacherRepository.findById(id)).thenReturn(java.util.Optional.of(teacher));
-
 
         // Act
         TeacherService teacherService = new TeacherService(teacherRepository);

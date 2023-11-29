@@ -11,10 +11,8 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,9 +24,6 @@ public class SessionControllerTest {
     SessionMapper sessionMapper;
     @Mock
     SessionService sessionService;
-
-    @Mock
-    UserService userService;
 
     @Test
     public void getById() {

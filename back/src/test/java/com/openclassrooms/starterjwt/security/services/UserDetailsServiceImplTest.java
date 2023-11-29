@@ -7,9 +7,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
-
 import static org.mockito.Mockito.when;
 
 @SpringBootTest

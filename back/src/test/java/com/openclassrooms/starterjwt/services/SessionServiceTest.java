@@ -108,7 +108,6 @@ public class SessionServiceTest {
 
     @Test
     public void participate() {
-
         // Arrange
         Long id = 1L;
         Long userId = 9L;
@@ -131,7 +130,6 @@ public class SessionServiceTest {
 
     @Test
     public void noLongerParticipate() {
-
         // Arrange
         Long id = 1L;
         Long userId = 9L;

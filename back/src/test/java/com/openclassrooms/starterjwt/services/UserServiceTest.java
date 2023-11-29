@@ -10,10 +10,8 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class UserServiceTest {
-
     @Mock
     UserRepository userRepository;
-
     @Test
     public void findById() {
 
