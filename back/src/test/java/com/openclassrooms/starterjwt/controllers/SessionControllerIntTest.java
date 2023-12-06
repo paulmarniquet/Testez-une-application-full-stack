@@ -148,7 +148,7 @@ public class SessionControllerIntTest {
 
     @Test
     public void testParticipate() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/5/participate/1")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/5/participate/2")
                         .header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isOk());
     }
@@ -169,7 +169,7 @@ public class SessionControllerIntTest {
 
     @Test
     public void testNoLongerParticipate() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/5/participate/3")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/5/participate/1")
                         .header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isOk());
     }
